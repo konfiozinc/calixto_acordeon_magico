@@ -1,0 +1,8 @@
+Coloca aquí los clips de audio reales de Calixto, en formato MP3 (128-192kbps).
+
+Nombres esperados por el código (script.js / index.html):
+- clip-1.mp3
+- clip-2.mp3
+- clip-3.mp3
+
+Si usas otros nombres, actualiza el atributo data-src de cada .track-item en index.html.

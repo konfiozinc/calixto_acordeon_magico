@@ -1,0 +1,10 @@
+Coloca aquí los videos reales de Calixto, en formato MP4 (H.264), optimizados
+para web (recomendado: máx. 15-20 MB por video, resolución 720p o 1080p vertical).
+
+Nombres esperados por el código (script.js / index.html):
+- presentacion-1.mp4
+- presentacion-2.mp4
+- presentacion-3.mp4
+- presentacion-4.mp4
+
+Si usas otros nombres, actualiza el atributo data-video de cada .video-card en index.html.
