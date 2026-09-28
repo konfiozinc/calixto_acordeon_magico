@@ -243,17 +243,21 @@ svg{fill:currentColor;}
 .stat-suffix{ font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:var(--gold-soft); }
 .stat-label{ display:block; font-size:10.5px; color:var(--grey); margin-top:4px; letter-spacing:.03em; }
 
-/* ===================== GALLERY ===================== */
-.gallery-grid{
-  display:grid; grid-template-columns:repeat(2,1fr); grid-auto-rows:108px; gap:8px;
+/* ===================== GALLERY (carrusel dinámico) ===================== */
+.gallery-slider{
+  display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory;
+  padding-bottom:6px; margin:0 -24px; padding-left:24px; padding-right:24px;
+  scrollbar-width:none;
 }
-.gallery-grid img{
-  width:100%; height:100%; object-fit:cover; border-radius:14px;
-  cursor:pointer; transition:transform .4s var(--ease), filter .4s var(--ease);
-  border:1px solid rgba(212,175,55,.15);
+.gallery-slider::-webkit-scrollbar{ display:none; }
+.gallery-card{ flex:0 0 62%; scroll-snap-align:center; }
+.gallery-thumb{
+  position:relative; border-radius:18px; overflow:hidden; aspect-ratio:3/4;
+  border:1px solid var(--glass-border); cursor:pointer;
+  transition:transform .25s var(--ease);
 }
-.gallery-grid img:active{ transform:scale(.95); }
-.gallery-grid .tall{ grid-row:span 2; }
+.gallery-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.gallery-card:active .gallery-thumb{ transform:scale(.97); }
 
 .lightbox{
   position:fixed; inset:0; z-index:6000; display:flex; align-items:center; justify-content:center;
@@ -410,7 +414,7 @@ svg{fill:currentColor;}
 
 /* ===================== FAB ===================== */
 .fab{
-  position:fixed; right:18px; bottom:max(18px, env(safe-area-inset-bottom));
+  position:fixed; right:max(18px, calc(50vw - var(--container)/2 + 18px)); bottom:max(18px, env(safe-area-inset-bottom));
   width:58px; height:58px; border-radius:50%; z-index:4000;
   background:linear-gradient(100deg,#34e07e,var(--whatsapp));
   display:flex; align-items:center; justify-content:center;

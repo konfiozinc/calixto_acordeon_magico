@@ -108,8 +108,11 @@
     const grid = $("#galleryGrid");
     if (!grid) return;
     grid.innerHTML = GALLERY_IMAGES.map((img, i) => `
-      <img src="${img.src}" alt="${img.alt}" loading="lazy" decoding="async"
-           class="${img.tall ? "tall" : ""}" data-index="${i}">`
+      <div class="gallery-card" data-index="${i}">
+        <div class="gallery-thumb">
+          <img src="${img.src}" alt="${img.alt}" loading="lazy" decoding="async">
+        </div>
+      </div>`
     ).join("");
   }
 
@@ -139,8 +142,8 @@
     const prev = () => { galleryIndex = (galleryIndex - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length; update(); };
 
     $("#galleryGrid").addEventListener("click", (e) => {
-      const img = e.target.closest("img[data-index]");
-      if (img) open(parseInt(img.dataset.index, 10));
+      const card = e.target.closest(".gallery-card");
+      if (card) open(parseInt(card.dataset.index, 10));
     });
     $("#lbClose").addEventListener("click", close);
     $("#lbNext").addEventListener("click", next);
@@ -209,6 +212,31 @@
     const dotsWrap = $("#videoDots");
     if (!slider || !dotsWrap) return;
     const cards = $$(".video-card", slider);
+    dotsWrap.innerHTML = cards.map((_, i) => `<span class="${i === 0 ? "active" : ""}"></span>`).join("");
+    const dots = $$("span", dotsWrap);
+    let ticking = false;
+    slider.addEventListener("scroll", () => {
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(() => {
+        const scrollCenter = slider.scrollLeft + slider.clientWidth / 2;
+        let closest = 0, min = Infinity;
+        cards.forEach((c, i) => {
+          const center = c.offsetLeft + c.clientWidth / 2;
+          const d = Math.abs(center - scrollCenter);
+          if (d < min) { min = d; closest = i; }
+        });
+        dots.forEach((d, i) => d.classList.toggle("active", i === closest));
+        ticking = false;
+      });
+    }, { passive: true });
+  }
+
+  /* ---------- GALLERY DOTS (carrusel de galería) ---------- */
+  function initGalleryDots() {
+    const slider   = $("#galleryGrid");
+    const dotsWrap = $("#galleryDots");
+    if (!slider || !dotsWrap) return;
+    const cards = $$(".gallery-card", slider);
     dotsWrap.innerHTML = cards.map((_, i) => `<span class="${i === 0 ? "active" : ""}"></span>`).join("");
     const dots = $$("span", dotsWrap);
     let ticking = false;
@@ -354,6 +382,7 @@
     initLightbox();
     initVideoModal();
     initVideoDots();
+    initGalleryDots();
     initAudioPlayer();
     initShare();
     initSaveContact();
