@@ -170,9 +170,13 @@ if (GA_ID && !/^G-XXXX/.test(GA_ID)) {
   <!-- ============ GALERÍA ============ -->
   <section class="section galeria" id="galeria">
     <h2 class="section-title reveal">Galería</h2>
-    <p class="section-sub reveal">Desliza para ver momentos en escenario</p>
-    <div class="gallery-slider reveal" id="galleryGrid">
-      <!-- generado dinámicamente por script.js a partir de assets/img/gallery -->
+    <p class="section-sub reveal">Desliza o usa las flechas para ver momentos en escenario</p>
+    <div class="gallery-carousel reveal" id="galleryCarousel">
+      <div class="gallery-track" id="galleryTrack">
+        <!-- generado dinámicamente por script.js -->
+      </div>
+      <button class="gallery-arrow prev" id="galleryPrev" type="button" aria-label="Foto anterior">&#10094;</button>
+      <button class="gallery-arrow next" id="galleryNext" type="button" aria-label="Foto siguiente">&#10095;</button>
     </div>
     <div class="dots" id="galleryDots"></div>
   </section>

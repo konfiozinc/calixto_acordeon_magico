@@ -1,5 +1,5 @@
 /* Service worker — Calixto Acordeón Mágico */
-const CACHE = 'calixto-v1';
+const CACHE = 'calixto-v2';
 const PRECACHE = [
   './',
   './index.html',
@@ -44,6 +44,20 @@ self.addEventListener('fetch', (event) => {
           return resp;
         })
         .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // CSS y JS: red primero (los cambios se ven de inmediato), caché de respaldo.
+  if (request.destination === 'style' || request.destination === 'script') {
+    event.respondWith(
+      fetch(request)
+        .then((resp) => {
+          const copia = resp.clone();
+          caches.open(CACHE).then((cache) => cache.put(request, copia));
+          return resp;
+        })
+        .catch(() => caches.match(request))
     );
     return;
   }

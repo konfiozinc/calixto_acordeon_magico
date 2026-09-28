@@ -105,9 +105,9 @@
   let galleryIndex = 0;
 
   function buildGallery() {
-    const grid = $("#galleryGrid");
-    if (!grid) return;
-    grid.innerHTML = GALLERY_IMAGES.map((img, i) => `
+    const track = $("#galleryTrack");
+    if (!track) return;
+    track.innerHTML = GALLERY_IMAGES.map((img, i) => `
       <div class="gallery-card" data-index="${i}">
         <div class="gallery-thumb">
           <img src="${img.src}" alt="${img.alt}" loading="lazy" decoding="async">
@@ -141,7 +141,7 @@
     const next = () => { galleryIndex = (galleryIndex + 1) % GALLERY_IMAGES.length; update(); };
     const prev = () => { galleryIndex = (galleryIndex - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length; update(); };
 
-    $("#galleryGrid").addEventListener("click", (e) => {
+    $("#galleryCarousel").addEventListener("click", (e) => {
       const card = e.target.closest(".gallery-card");
       if (card) open(parseInt(card.dataset.index, 10));
     });
@@ -231,29 +231,68 @@
     }, { passive: true });
   }
 
-  /* ---------- GALLERY DOTS (carrusel de galería) ---------- */
-  function initGalleryDots() {
-    const slider   = $("#galleryGrid");
+  /* ---------- GALLERY CAROUSEL (automático, con flechas y puntos) ---------- */
+  function initGalleryCarousel() {
+    const carousel = $("#galleryCarousel");
+    const track    = $("#galleryTrack");
+    const prev     = $("#galleryPrev");
+    const next     = $("#galleryNext");
     const dotsWrap = $("#galleryDots");
-    if (!slider || !dotsWrap) return;
-    const cards = $$(".gallery-card", slider);
-    dotsWrap.innerHTML = cards.map((_, i) => `<span class="${i === 0 ? "active" : ""}"></span>`).join("");
-    const dots = $$("span", dotsWrap);
-    let ticking = false;
-    slider.addEventListener("scroll", () => {
-      if (ticking) return; ticking = true;
-      requestAnimationFrame(() => {
-        const scrollCenter = slider.scrollLeft + slider.clientWidth / 2;
-        let closest = 0, min = Infinity;
-        cards.forEach((c, i) => {
-          const center = c.offsetLeft + c.clientWidth / 2;
-          const d = Math.abs(center - scrollCenter);
-          if (d < min) { min = d; closest = i; }
-        });
-        dots.forEach((d, i) => d.classList.toggle("active", i === closest));
-        ticking = false;
+    if (!carousel || !track) return;
+
+    const cards = $$(".gallery-card", track);
+    const total = cards.length;
+    if (!total) return;
+
+    let index = 0, timer = null;
+    const reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (dotsWrap) {
+      dotsWrap.innerHTML = cards.map((_, i) => `<span class="${i === 0 ? "active" : ""}" data-i="${i}"></span>`).join("");
+    }
+    const dots = dotsWrap ? $$("span", dotsWrap) : [];
+
+    const ir = (n) => {
+      index = (n + total) % total;
+      track.style.transform = `translateX(${-index * 100}%)`;
+      dots.forEach((d, i) => d.classList.toggle("active", i === index));
+    };
+    const play = () => {
+      if (reducir || timer) return;
+      timer = setInterval(() => ir(index + 1), 4000);
+    };
+    const stop = () => { clearInterval(timer); timer = null; };
+
+    if (prev) prev.addEventListener("click", () => { ir(index - 1); stop(); play(); });
+    if (next) next.addEventListener("click", () => { ir(index + 1); stop(); play(); });
+
+    if (dotsWrap) {
+      dotsWrap.addEventListener("click", (e) => {
+        const d = e.target.closest("span[data-i]");
+        if (!d) return;
+        ir(Number(d.dataset.i)); stop(); play();
       });
+    }
+
+    /* Pausa al pasar el mouse o enfocar controles */
+    carousel.addEventListener("pointerenter", stop);
+    carousel.addEventListener("pointerleave", play);
+    carousel.addEventListener("focusin", stop);
+    carousel.addEventListener("focusout", play);
+
+    /* Deslizar con el dedo */
+    let x0 = null;
+    carousel.addEventListener("touchstart", (e) => { x0 = e.changedTouches[0].clientX; stop(); }, { passive: true });
+    carousel.addEventListener("touchend", (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      x0 = null;
+      if (Math.abs(dx) > 40) ir(dx < 0 ? index + 1 : index - 1);
+      play();
     }, { passive: true });
+
+    ir(0);
+    play();
   }
 
   /* ---------- AUDIO PLAYER ---------- */
@@ -367,9 +406,15 @@
 
   /* ---------- SERVICE WORKER ---------- */
   function initServiceWorker() {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./service-worker.js").catch(() => {});
-    }
+    if (!("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+    /* Cuando se instala una versión nueva del SW, recarga una vez para
+       que el usuario vea siempre la versión más reciente (sin caché viejo). */
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (sessionStorage.getItem("kz_reload")) return;
+      sessionStorage.setItem("kz_reload", "1");
+      window.location.reload();
+    });
   }
 
   /* ---------- INIT ---------- */
@@ -382,7 +427,7 @@
     initLightbox();
     initVideoModal();
     initVideoDots();
-    initGalleryDots();
+    initGalleryCarousel();
     initAudioPlayer();
     initShare();
     initSaveContact();
