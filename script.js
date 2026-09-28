@@ -188,6 +188,13 @@
       modalVideo.load();
     };
 
+    /* Si el MP4 aún no existe (a la espera de los videos reales), no se rompe */
+    modalVideo.addEventListener("error", () => {
+      if (!modalVideo.getAttribute("src")) return;
+      showToast("Este video estará disponible próximamente 🎬");
+      close();
+    });
+
     $$(".video-card").forEach(card => card.addEventListener("click", () => open(card.dataset.video)));
     closeBtn.addEventListener("click", close);
     overlay.addEventListener("click", close);
@@ -330,6 +337,13 @@
     if (el) el.textContent = new Date().getFullYear();
   }
 
+  /* ---------- SERVICE WORKER ---------- */
+  function initServiceWorker() {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+    }
+  }
+
   /* ---------- INIT ---------- */
   document.addEventListener("DOMContentLoaded", () => {
     wireWhatsappLinks();
@@ -345,5 +359,6 @@
     initSaveContact();
     initFab();
     initYear();
+    initServiceWorker();
   });
 })();

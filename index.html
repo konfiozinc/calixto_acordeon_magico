@@ -7,15 +7,26 @@
 <meta name="description" content="Calixto Acordeón Mágico — Acordeonista, cantante y animador profesional en Bucaramanga. Vallenato, música popular, serenatas y eventos. Contrata por WhatsApp.">
 <meta name="theme-color" content="#0a0e1a">
 
+<link rel="canonical" href="https://konfiozinc.github.io/calixto_acordeon_magico/" />
+
 <!-- Open Graph -->
 <meta property="og:type" content="profile">
-<meta property="og:title" content="Calixto Acordeón Mágico | Tarjeta Digital Premium">
+<meta property="og:title" content="Calixto Acordeón Mágico | Acordeonista Profesional en Bucaramanga">
 <meta property="og:description" content="La mejor música para hacer inolvidables tus eventos. Acordeonista profesional en Bucaramanga.">
-<meta property="og:image" content="assets/img/og-image.jpg">
+<meta property="og:url" content="https://konfiozinc.github.io/calixto_acordeon_magico/" />
+<meta property="og:image" content="https://konfiozinc.github.io/calixto_acordeon_magico/assets/img/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:locale" content="es_CO">
 
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Calixto Acordeón Mágico | Acordeonista Profesional en Bucaramanga">
+<meta name="twitter:description" content="Vallenato, música popular y serenatas en vivo. Contrata por WhatsApp.">
+<meta name="twitter:image" content="https://konfiozinc.github.io/calixto_acordeon_magico/assets/img/og-image.jpg">
+
 <link rel="icon" type="image/png" href="assets/img/favicon-32.png">
-<link rel="apple-touch-icon" href="assets/img/icon-192.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-180.png">
 <link rel="manifest" href="manifest.json">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,7 +35,34 @@
 
 <link rel="stylesheet" href="style.css">
 
-<link rel="stylesheet" href="styles.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MusicGroup",
+  "name": "Calixto Acordeón Mágico",
+  "description": "Acordeonista, cantante y animador profesional en Bucaramanga. Vallenato, música popular, carranga y serenatas en vivo.",
+  "telephone": "+573157866859",
+  "email": "calixtoacordeonmagico@gmail.com",
+  "url": "https://konfiozinc.github.io/calixto_acordeon_magico/",
+  "image": "https://konfiozinc.github.io/calixto_acordeon_magico/assets/img/og-image.jpg",
+  "genre": ["Vallenato", "Música Popular", "Carranga", "Cumbia"],
+  "address": { "@type": "PostalAddress", "addressLocality": "Bucaramanga", "addressRegion": "Santander", "addressCountry": "CO" }
+}
+</script>
+
+<script>
+const GA_ID = 'G-XXXXXXXXXX';
+if (GA_ID && !/^G-XXXX/.test(GA_ID)) {
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', GA_ID);
+}
+</script>
 
 </head>
 <body>
@@ -47,7 +85,7 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero" id="hero">
-    <img class="hero-bg" src="assets/img/hero-calixto.jpg" alt="Calixto Acordeón Mágico en presentación en vivo" width="1200" height="1600" fetchpriority="high">
+    <img class="hero-bg" src="assets/img/hero-calixto.jpg" alt="Calixto Acordeón Mágico en presentación en vivo" width="900" height="1200" fetchpriority="high">
     <div class="hero-overlay"></div>
 
     <div class="hero-top">
@@ -302,7 +340,7 @@
     <p class="text-[10px] tracking-widest text-slate-500 uppercase font-medium">
         Creado por <a href="https://konfiozinc.github.io" target="_blank" rel="noopener" class="text-amber-500 font-semibold hover:underline">KONFÍO ZINC</a> — Todos los derechos reservados
     </p>
-    <p class="footer-year text-[10px] text-slate-600 mt-1">&copy; <span id="year"></span> Calixto Acordeón Mágico</p>
+    <p class="footer-year text-[10px] text-slate-600 mt-1">&copy; <span id="year"></span> Calixto Acordeón Mágico · <a href="privacidad.html" class="text-amber-500 hover:underline">Privacidad</a></p>
   </footer>
 
 </main>
