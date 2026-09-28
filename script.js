@@ -206,29 +206,66 @@
     });
   }
 
-  /* ---------- VIDEO DOTS ---------- */
-  function initVideoDots() {
-    const slider   = $("#videoSlider");
+  /* ---------- VIDEO CAROUSEL (automático, con flechas y puntos) ---------- */
+  function initVideoCarousel() {
+    const carousel = $("#videoCarousel");
+    const track    = $("#videoTrack");
+    const prev     = $("#videoPrev");
+    const next     = $("#videoNext");
     const dotsWrap = $("#videoDots");
-    if (!slider || !dotsWrap) return;
-    const cards = $$(".video-card", slider);
-    dotsWrap.innerHTML = cards.map((_, i) => `<span class="${i === 0 ? "active" : ""}"></span>`).join("");
-    const dots = $$("span", dotsWrap);
-    let ticking = false;
-    slider.addEventListener("scroll", () => {
-      if (ticking) return; ticking = true;
-      requestAnimationFrame(() => {
-        const scrollCenter = slider.scrollLeft + slider.clientWidth / 2;
-        let closest = 0, min = Infinity;
-        cards.forEach((c, i) => {
-          const center = c.offsetLeft + c.clientWidth / 2;
-          const d = Math.abs(center - scrollCenter);
-          if (d < min) { min = d; closest = i; }
-        });
-        dots.forEach((d, i) => d.classList.toggle("active", i === closest));
-        ticking = false;
+    if (!carousel || !track) return;
+
+    const cards = $$(".video-card", track);
+    const total = cards.length;
+    if (!total) return;
+
+    let index = 0, timer = null;
+    const reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (dotsWrap) {
+      dotsWrap.innerHTML = cards.map((_, i) => `<span class="${i === 0 ? "active" : ""}" data-i="${i}"></span>`).join("");
+    }
+    const dots = dotsWrap ? $$("span", dotsWrap) : [];
+
+    const ir = (n) => {
+      index = (n + total) % total;
+      track.style.transform = `translateX(${-index * 100}%)`;
+      dots.forEach((d, i) => d.classList.toggle("active", i === index));
+    };
+    const play = () => {
+      if (reducir || timer) return;
+      timer = setInterval(() => ir(index + 1), 5000);
+    };
+    const stop = () => { clearInterval(timer); timer = null; };
+
+    if (prev) prev.addEventListener("click", () => { ir(index - 1); stop(); play(); });
+    if (next) next.addEventListener("click", () => { ir(index + 1); stop(); play(); });
+
+    if (dotsWrap) {
+      dotsWrap.addEventListener("click", (e) => {
+        const d = e.target.closest("span[data-i]");
+        if (!d) return;
+        ir(Number(d.dataset.i)); stop(); play();
       });
+    }
+
+    carousel.addEventListener("pointerenter", stop);
+    carousel.addEventListener("pointerleave", play);
+    carousel.addEventListener("focusin", stop);
+    carousel.addEventListener("focusout", play);
+
+    let x0 = null;
+    carousel.addEventListener("touchstart", (e) => { x0 = e.changedTouches[0].clientX; stop(); }, { passive: true });
+    carousel.addEventListener("touchend", (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      x0 = null;
+      if (Math.abs(dx) > 40) ir(dx < 0 ? index + 1 : index - 1);
+      play();
     }, { passive: true });
+
+    ir(0);
+    play();
   }
 
   /* ---------- GALLERY CAROUSEL (automático, con flechas y puntos) ---------- */
@@ -426,7 +463,7 @@
     initCounters();
     initLightbox();
     initVideoModal();
-    initVideoDots();
+    initVideoCarousel();
     initGalleryCarousel();
     initAudioPlayer();
     initShare();
